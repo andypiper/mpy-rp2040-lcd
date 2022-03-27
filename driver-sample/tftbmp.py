@@ -1,7 +1,7 @@
 from ST7735 import TFT,TFTColor
 from machine import SPI,Pin
 
-# this sets the driver to use the correct pins for the display
+# this sets the driver to use the correct pins for this display
 spi = SPI(1, baudrate=10000000, polarity=0, phase=0, sck=Pin(10), mosi=Pin(11), miso=None)
 tft=TFT(spi,8,12,9)
 
@@ -10,7 +10,8 @@ tft.rgb(False) # board is bgr per waveshare sample
 tft.invertcolor(True) # otherwise image is inverted
 tft.fill(TFT.BLACK)
 
-f=open('test128x160.bmp', 'rb')
+# wants a Windows 3.1 format bitmap
+f=open('test-logo.bmp', 'rb')
 if f.read(2) == b'BM':  #header
     dummy = f.read(8) #file size(4), creator bytes(4)
     offset = int.from_bytes(f.read(4), 'little')
@@ -28,12 +29,13 @@ if f.read(2) == b'BM':  #header
             else:
                 flip = True
             w, h = width, height
-            if w > 128: w = 128
+            # max dimensions of this board are 80x160
+            if w > 80: w = 80
             if h > 160: h = 160
             tft._setwindowloc((0,0),(w - 1,h - 1))
             for row in range(h):
                 if flip:
-                    pos = offset + (height - 1 - row) * rowsize
+                    pos = offset + (h - 1 - row) * rowsize
                 else:
                     pos = offset + row * rowsize
                 if f.tell() != pos:
