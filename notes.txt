@@ -1,0 +1,3 @@
+Tested the MicroPython firmware from Waveshare - 1.13 build
+Also installed latest 1.18+ nightly build
+
